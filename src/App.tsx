@@ -1,26 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './views/Home';
+import Login from './views/Login'
+import MyTrades from './views/MyTrades';
+import Pricer from './views/Pricer';
+import Profile from './views/Profile';
+import Register from './views/Register';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+export default function App() {
+    return (
+        <div className="App">
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/signIn" element={<Login />} />
+                    <Route path="/signUp" element={<Register />} />
+                    <Route path="/pricer" element={<Pricer />} />
+                    <Route path="/myTrades" element={<MyTrades />} />
+                    <Route path="/profile" element={<Profile />} />
+                </Routes>
+            </BrowserRouter>
+        </div>
+    );
 }
 
-export default App;
