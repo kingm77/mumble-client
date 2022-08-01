@@ -1,27 +1,34 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import {Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+import { history } from './helpers/history';
 import Home from './views/Home';
 import Login from './views/Login'
 import MyTrades from './views/MyTrades';
 import Pricer from './views/Pricer';
-import Profile from './views/Profile';
 import Register from './views/Register';
 
 
-
 export default function App() {
+    history.navigate = useNavigate();
+    history.location = useLocation();
+
     return (
         <div className="App">
-            <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/signIn" element={<Login />} />
                     <Route path="/signUp" element={<Register />} />
-                    <Route path="/pricer" element={<Pricer />} />
+                    <Route
+                        path="/pricer"
+                        element={
+                                    <PrivateRoute>
+                                      <Pricer />
+                                    </PrivateRoute>
+                            }
+                    />
                     <Route path="/myTrades" element={<MyTrades />} />
-                    <Route path="/profile" element={<Profile />} />
                 </Routes>
-            </BrowserRouter>
         </div>
     );
 }

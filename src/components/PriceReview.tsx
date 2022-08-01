@@ -1,78 +1,65 @@
-import * as React from 'react';
+import React, { useContext} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
+import { PricerState } from '../state/GlobalState';
+import PriceDataItem from './PriceDataItem';
+import TradeDetail from './TradeDetail';
 
-const data = [
-    {
-        name: 'Strike',
-        desc: '',
-        price: '9.99',
-    },
-    {
-        name: 'Spot',
-        desc: '',
-        price: '3.45',
-    },
-    {
-        name: 'Maturity',
-        desc: '',
-        price: '30/08/2024',
-    },
-    {
-        name: 'Volatility',
-        desc: '',
-        price: '0.33',
-    },
-    { name: 'Interest rate', desc: '', price: '0.50' },
-];
-
-const tradeDetails = [
-    { name: 'Trade type', detail: 'Call' },
-    { name: 'Trade quantity', detail: '100' },
-    { name: 'Trade date', detail: new Date().toLocaleDateString() },
-    { name: 'Price', detail: '36.087564' },
-];
 
 export default function PriceReview() {
+
+    const {
+        instr: [instrument, ],
+        type: [type, ],
+        maturity: [maturity, setMaturity],
+        strike: [strike, ],
+        spot: [spot, ],
+        volatility: [volatility, ],
+        interestRate: [interestRate,],
+        quantity: [quantity, ]
+    } = useContext(PricerState);
+
+    let strMaturity = "";
+    try {
+        strMaturity = new Date(maturity.toString()).toISOString().substr(0, 10);
+    }
+    catch (ex: any) {
+        strMaturity = new Date().toISOString().substr(0, 10);
+        setMaturity(new Date());
+    }
+
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
                Summary
             </Typography>
+
             <List disablePadding>
-                {data.map((product) => (
-                    <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
-                        <ListItemText primary={product.name} secondary={product.desc} />
-                        <Typography variant="body2">{product.price}</Typography>
-                    </ListItem>
-                ))}
+                <PriceDataItem text="strike" value={strike.toString()} />
+                <PriceDataItem text="spot" value={spot.toString()} />
+                <PriceDataItem text="maturity" value={strMaturity } />
+                <PriceDataItem text="volatility" value={volatility.toString()} />
+                <PriceDataItem text="interestRate" value={interestRate.toString()} />
             </List>
+
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Instrument
                     </Typography>
-                    <Typography gutterBottom>AAPL</Typography>
-                    <Typography gutterBottom>APPLE INC.</Typography>
+                    <Typography gutterBottom>{ instrument.toString() }</Typography>
+                    <Typography gutterBottom>Owner</Typography>
                 </Grid>
                 <Grid item container direction="column" xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Trade details
                     </Typography>
                     <Grid container>
-                        {tradeDetails.map((payment) => (
-                            <React.Fragment key={payment.name}>
-                                <Grid item xs={6}>
-                                    <Typography gutterBottom>{payment.name}</Typography>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Typography gutterBottom>{payment.detail}</Typography>
-                                </Grid>
-                            </React.Fragment>
-                        ))}
+                        <TradeDetail name="Trade type" value={type.toString()} />
+                        <TradeDetail name="Trade quantity" value={quantity.toString()} />
+                        <TradeDetail name="Trade date" value={new Date().toISOString().substr(0, 10) } />
+                        <TradeDetail name="Price" value={"78546"} />
                     </Grid>
                 </Grid>
             </Grid>

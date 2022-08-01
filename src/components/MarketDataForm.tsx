@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { PricerState } from '../state/GlobalState';
+import { onNumericalDataChange } from '../views/Pricer';
 
 export default function MarketDataForm() {
+
+    const {
+        spot: [spot, setSpot],
+        volatility: [volatility, setVolatility],
+        interestRate: [interestRate, setInterestRate]
+    } = useContext(PricerState);
+
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
@@ -20,6 +29,8 @@ export default function MarketDataForm() {
                         fullWidth
                         autoComplete="Volatility*"
                         variant="standard"
+                        value={volatility}
+                        onChange={e => { onNumericalDataChange(e.target.value, setVolatility) }}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -32,6 +43,8 @@ export default function MarketDataForm() {
                         fullWidth
                         autoComplete="Spot*"
                         variant="standard"
+                        value={spot}
+                        onChange={e => { onNumericalDataChange(e.target.value, setSpot) }}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -44,6 +57,8 @@ export default function MarketDataForm() {
                         fullWidth
                         autoComplete="Interest Rate*"
                         variant="standard"
+                        value={interestRate}
+                        onChange={e => { onNumericalDataChange(e.target.value, setInterestRate) }}
                     />
                 </Grid>
             </Grid>

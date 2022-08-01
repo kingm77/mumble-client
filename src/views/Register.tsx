@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,22 +11,31 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../components/Copyright';
-
+import { useForm  } from 'react-hook-form';
+import { RegisterValidationSchema } from '../FormValidation/RegisterValidationSchema';
+import { yupResolver } from '@hookform/resolvers/yup';
+import NavBar from '../components/Navbar';
 
 const theme = createTheme();
 
 export default function Register() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+
+    const onSubmit = (data: any) => {
+        console.log(JSON.stringify(data, null, 2));
     };
+
+    const {
+        register,
+        handleSubmit,
+        formState: {errors}
+    } = useForm({
+        resolver: yupResolver(RegisterValidationSchema)
+    });
+
 
     return (
         <ThemeProvider theme={theme}>
+            <NavBar />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -45,18 +52,22 @@ export default function Register() {
                     <Typography component="h1" variant="h5">
                         Sign up
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     autoComplete="given-name"
-                                    name="firstName"
                                     required
                                     fullWidth
                                     id="firstName"
                                     label="First Name"
                                     autoFocus
+                                    {...register('firstname')}
+                                    error={errors.firstname ? true: false }
                                 />
+                                <Typography variant="inherit" color="textSecondary">
+                                    {errors.firstname?.message?.toString()}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -64,9 +75,13 @@ export default function Register() {
                                     fullWidth
                                     id="lastName"
                                     label="Last Name"
-                                    name="lastName"
                                     autoComplete="family-name"
+                                    {...register('lastname')}
+                                    error={errors.lastname ? true : false}
                                 />
+                                <Typography variant="inherit" color="textSecondary">
+                                    {errors.lastname?.message?.toString()}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -74,34 +89,47 @@ export default function Register() {
                                     fullWidth
                                     id="email"
                                     label="Email Address"
-                                    name="email"
                                     autoComplete="email"
+                                    {...register('email')}
+                                    error={errors.email ? true : false}
                                 />
+                                <Typography variant="inherit" color="textSecondary">
+                                    {errors.email?.message?.toString()}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    name="password"
                                     label="Password"
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    {...register('password')}
+                                    error={errors.password ? true : false}
                                 />
+                                <Typography variant="inherit" color="textSecondary">
+                                    {errors.password?.message?.toString()}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    name="repassword"
                                     label="Comfirm Password"
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    {...register("confirmPassword")}
+                                    error={errors.confirmPassword ? true : false}
                                 />
+                                <Typography variant="inherit" color="textSecondary">
+                                    {errors.confirmPassword?.message?.toString()}
+                                </Typography>
                             </Grid>
                         </Grid>
                         <Button
+                            onClick={handleSubmit(onSubmit)}
                             type="submit"
                             fullWidth
                             variant="contained"

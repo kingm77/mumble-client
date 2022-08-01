@@ -13,9 +13,17 @@ import MarketDataForm from '../components/MarketDataForm';
 import PriceReview from '../components/PriceReview';
 import Copyright from '../components/Copyright';
 import NavBar from '../components/Navbar';
+import { PricerState } from '../state/GlobalState';
 
 
 const steps = ['Financial Definition', 'Market Data', 'Pricing Review'];
+
+export const onNumericalDataChange = (val: any, handle: (value: any) => void) => {
+    if (val <= 0)
+        handle(1);
+    else
+        handle(val);
+}
 
 function getStepContent(step: number) {
     switch (step) {
@@ -32,7 +40,15 @@ function getStepContent(step: number) {
 
 const theme = createTheme();
 
-export default function Checkout() {
+export default function Pricer() {
+    const [instrument, setInstrument] = React.useState("AAPL");
+    const [strike, setStrike] = React.useState(1);
+    const [tradeType, setTradeType] = React.useState("call");
+    const [maturity, setMaturity] = React.useState(new Date());
+    const [volatility, setVolatility] = React.useState(1);
+    const [spot, setSpot] = React.useState(1);
+    const [interestRate, setInterestRate] = React.useState(1);
+    const [quantity, setQuantity] = React.useState(1);
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleNext = () => {
@@ -70,7 +86,25 @@ export default function Checkout() {
                             </React.Fragment>
                         ) : (
                             <React.Fragment>
-                                {getStepContent(activeStep)}
+                                    {
+                                        <PricerState.Provider
+                                            value={
+                                                {
+                                                    instr: [instrument, setInstrument],
+                                                    strike: [strike, setStrike],
+                                                    type: [tradeType, setTradeType],
+                                                    maturity: [maturity, setMaturity],
+                                                    volatility: [volatility, setVolatility],
+                                                    spot: [spot, setSpot],
+                                                    interestRate: [interestRate, setInterestRate],
+                                                    quantity: [quantity, setQuantity]
+                                                }
+                                            }
+                                        >
+                                            {getStepContent(activeStep)}
+                                         </PricerState.Provider>
+                                       
+                                    }
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>

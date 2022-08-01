@@ -40,14 +40,6 @@ export default function NavBar() {
                   >
                       My Trades
                   </Link>
-                  <Link
-                      variant="button"
-                      color="text.primary"
-                      href="/profile"
-                      sx={{ my: 1, mx: 1.5 }}
-                  >
-                       Profile
-                  </Link>
               </nav>
               <Button href="/signIn" variant="outlined" sx={{ my: 1, mx: 1.5 }}>
                   Sign in
