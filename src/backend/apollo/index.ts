@@ -1,4 +1,4 @@
-import { ApolloClient, from, gql, HttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
 import { onError } from "@apollo/client/link/error";
 
 const backendClient = new ApolloClient({
@@ -15,9 +15,12 @@ const backendClient = new ApolloClient({
         }),
         new HttpLink({
             uri: process.env.REACT_APP_BACKEND_URL,
+            credentials: "include"
         }),
     ]),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        resultCaching: false,
+    }),
 });
 
 export default backendClient;

@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import {Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
 import { history } from './helpers/history';
 import Home from './views/Home';
 import Login from './views/Login'
@@ -21,10 +21,16 @@ export default function App() {
                     <Route
                         path="/pricer"
                         element={
-                               <Pricer />     
+                                <PrivateRoute>
+                                    <Pricer />
+                                </PrivateRoute>     
                             }
                     />
-                    <Route path="/myTrades" element={<MyTrades />} />
+                    <Route path="/myTrades" element={
+                        <PrivateRoute>
+                            <Pricer />
+                        </PrivateRoute>} 
+                    />
                 </Routes>
         </div>
     );

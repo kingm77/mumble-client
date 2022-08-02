@@ -14,7 +14,9 @@ import PriceReview from '../components/PriceReview';
 import Copyright from '../components/Copyright';
 import NavBar from '../components/Navbar';
 import { PricerState } from '../state/GlobalState';
-
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_INSTRUMENT_BY_NAME } from '../backend/apollo/query';
+import { CREATE_FINANCIAL_DEFINITION } from '../backend/apollo/mutation';
 
 const steps = ['Financial Definition', 'Market Data', 'Pricing Review'];
 
@@ -50,6 +52,11 @@ export default function Pricer() {
     const [interestRate, setInterestRate] = React.useState(1);
     const [quantity, setQuantity] = React.useState(1);
     const [activeStep, setActiveStep] = React.useState(0);
+    const [instrumentOwner, setInstrumentOwner] = React.useState("");
+    const [finDefId, setFinDefId] = React.useState(0);
+    const [mktDataId, setMktDataId] = React.useState(0);
+    const [priceValue, setPriceValue] = React.useState(0);
+    const [tradeID, setTradeID] = React.useState(0);
 
     const handleNext = () => {
         setActiveStep(activeStep + 1);
@@ -81,7 +88,7 @@ export default function Pricer() {
                                     Trade Booked Successfully
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    Your trade number is #2001539. Next time, You can use this code to recover your trade
+                                    Your trade number is #{tradeID}. Next time, You can use this code to recover your trade
                                 </Typography>
                             </React.Fragment>
                         ) : (
@@ -97,7 +104,12 @@ export default function Pricer() {
                                                     volatility: [volatility, setVolatility],
                                                     spot: [spot, setSpot],
                                                     interestRate: [interestRate, setInterestRate],
-                                                    quantity: [quantity, setQuantity]
+                                                    quantity: [quantity, setQuantity],
+                                                    instrOwner: [instrumentOwner, setInstrumentOwner],
+                                                    financialDefinitionId: [finDefId, setFinDefId],
+                                                    marketDataId: [mktDataId, setMktDataId],
+                                                    price: [priceValue, setPriceValue],
+                                                    tradeId: [tradeID, setTradeID]
                                                 }
                                             }
                                         >

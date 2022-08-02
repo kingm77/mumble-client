@@ -1,13 +1,13 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 import { PricerState } from '../state/GlobalState';
 import PriceDataItem from './PriceDataItem';
 import TradeDetail from './TradeDetail';
-import { useMutation, useQuery } from '@apollo/client';
 import { GET_INSTRUMENT_BY_NAME } from '../backend/apollo/query';
-import { CREATE_FINANCIAL_DEFINITION } from '../backend/apollo/mutation';
+import { useQuery } from '@apollo/client';
+
 
 
 export default function PriceReview() {
@@ -20,19 +20,18 @@ export default function PriceReview() {
         spot: [spot, ],
         volatility: [volatility, ],
         interestRate: [interestRate,],
-        quantity: [quantity, ]
+        quantity: [quantity, ],
     } = useContext(PricerState);
 
     let strMaturity = "";
     try {
-        strMaturity = new Date(maturity.toString()).toISOString().substr(0, 10);
+        strMaturity = new Date(maturity.toString()).toISOString().substring(0, 10);
     }
     catch (ex: any) {
-        strMaturity = new Date().toISOString().substr(0, 10);
+        strMaturity = new Date().toISOString().substring(0, 10);
         setMaturity(new Date());
     }
-  
-    const [createFinancialDef] = useMutation(CREATE_FINANCIAL_DEFINITION);
+    
     const { loading, error, data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument }});
 
     if (loading) return <p>Loading...</p>;
@@ -42,12 +41,8 @@ export default function PriceReview() {
         return <p>{res.messages[0]}</p>
 
     const instrumentObj = res;
-
-    (async () => {
-        const finDef = await createFinancialDef({ variables: { strike: strike, maturity: strMaturity, type: type, instrumentName: instrumentObj.name } })
-        console.log(finDef);
-    })();
-
+    
+    
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
@@ -77,7 +72,7 @@ export default function PriceReview() {
                     <Grid container>
                         <TradeDetail name="Trade type" value={type.toString()} />
                         <TradeDetail name="Trade quantity" value={quantity.toString()} />
-                        <TradeDetail name="Trade date" value={new Date().toISOString().substr(0, 10) } />
+                        <TradeDetail name="Trade date" value={new Date().toISOString().substring(0, 10) } />
                         <TradeDetail name="Price" value={"78546"} />
                     </Grid>
                 </Grid>

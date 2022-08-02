@@ -17,7 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '../backend/apollo/mutation';
-import { Navigate, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 
 const theme = createTheme();
@@ -32,8 +32,6 @@ export default function Login() {
 
     const onSubmit = async (data: any) => {
         const res = await loginFct({ variables: { email: data.email, password: data.password } });
-
-        console.log(res);
 
         if (!res.data.login.success)
             setLoginError(res.data.login.messages[0]);
