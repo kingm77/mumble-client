@@ -5,6 +5,9 @@ import Grid from '@mui/material/Grid';
 import { PricerState } from '../state/GlobalState';
 import PriceDataItem from './PriceDataItem';
 import TradeDetail from './TradeDetail';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_INSTRUMENT_BY_NAME } from '../backend/apollo/query';
+import { CREATE_FINANCIAL_DEFINITION } from '../backend/apollo/mutation';
 
 
 export default function PriceReview() {
@@ -28,6 +31,22 @@ export default function PriceReview() {
         strMaturity = new Date().toISOString().substr(0, 10);
         setMaturity(new Date());
     }
+  
+    const [createFinancialDef] = useMutation(CREATE_FINANCIAL_DEFINITION);
+    const { loading, error, data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument }});
+
+    if (loading) return <p>Loading...</p>;
+    const res = data.getInstrumentByName;
+
+    if (res.sucess)
+        return <p>{res.messages[0]}</p>
+
+    const instrumentObj = res;
+
+    (async () => {
+        const finDef = await createFinancialDef({ variables: { strike: strike, maturity: strMaturity, type: type, instrumentName: instrumentObj.name } })
+        console.log(finDef);
+    })();
 
     return (
         <React.Fragment>
@@ -48,8 +67,8 @@ export default function PriceReview() {
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Instrument
                     </Typography>
-                    <Typography gutterBottom>{ instrument.toString() }</Typography>
-                    <Typography gutterBottom>Owner</Typography>
+                    <Typography gutterBottom>{ instrumentObj.name }</Typography>
+                    <Typography gutterBottom>{ instrumentObj.owner }</Typography>
                 </Grid>
                 <Grid item container direction="column" xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

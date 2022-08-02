@@ -14,13 +14,31 @@ import Copyright from '../components/Copyright';
 import NavBar from '../components/Navbar';
 import { LoginValidationSchema } from '../FormValidation/LoginValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../backend/apollo/mutation';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 const theme = createTheme();
 
 export default function Login() {
-    const onSubmit = (data: any) => {
-        console.log(JSON.stringify(data, null, 2));
+
+    const [loginError, setLoginError] = useState("");
+
+    const [loginFct] = useMutation(LOGIN);
+
+    const nav = useNavigate();
+
+    const onSubmit = async (data: any) => {
+        const res = await loginFct({ variables: { email: data.email, password: data.password } });
+
+        console.log(res);
+
+        if (!res.data.login.success)
+            setLoginError(res.data.login.messages[0]);
+        else
+            nav('/');
     };
 
     const {
@@ -49,6 +67,9 @@ export default function Login() {
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign in
+                    </Typography>
+                    <Typography style={ {color: "red"} }>
+                        {loginError}
                     </Typography>
                     <Box component="form" noValidate sx={{ mt: 3 }}>
                         <Grid container spacing={2}>

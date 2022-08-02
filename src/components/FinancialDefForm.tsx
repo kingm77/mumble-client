@@ -14,6 +14,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { PricerState } from '../state/GlobalState';
 import { onNumericalDataChange } from '../views/Pricer';
+import { useQuery } from '@apollo/client';
+import { GET_INSTRUMENTS } from '../backend/apollo/query';
 
 
 export default function FinancialDefForm() {
@@ -25,7 +27,19 @@ export default function FinancialDefForm() {
         quantity: [quantity, setQuantity]
     } = useContext(PricerState);
 
-    const instruments = ["AAPL", "MSFT", "TSLA"];
+    const { loading, error, data } = useQuery(GET_INSTRUMENTS);
+
+    if (error)
+        return <p>An error occured</p>
+    if (loading)
+        return <p>Loading...</p>
+  
+    const res = data.getInstruments;
+
+    if (res.sucess)
+        return <p>{ res.messages[0] }</p>
+
+    const { instruments } = res;
 
     return (
         <React.Fragment>
@@ -44,8 +58,8 @@ export default function FinancialDefForm() {
                             value={instrument}
                             onChange={e => {setInstrument(e.target.value.toString())}}
                         >
-                            {instruments.map((instr) => (
-                                <MenuItem value={instr}>{instr}</MenuItem>
+                            {instruments.map((instr: any) => (
+                                <MenuItem value={instr.name}>{instr.name}</MenuItem>
                              ))} 
                         </Select>
                     </FormControl>
