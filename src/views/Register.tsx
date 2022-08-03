@@ -15,13 +15,26 @@ import { useForm  } from 'react-hook-form';
 import { RegisterValidationSchema } from '../FormValidation/RegisterValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import NavBar from '../components/Navbar';
+import { useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
+import { REGISTER } from '../backend/apollo/mutation';
 
 const theme = createTheme();
 
 export default function Register() {
+    const [registrationError, seRegistrationError] = React.useState("");
 
-    const onSubmit = (data: any) => {
-        console.log(JSON.stringify(data, null, 2));
+    const [registerFct] = useMutation(REGISTER);
+
+    const nav = useNavigate();
+
+    const onSubmit = async (data: any) => {
+        const res = await registerFct({ variables: { email: data.email, password: data.password, firstname: data.firstname, lastname: data.lastname } });
+
+        if (!res.data.register.success)
+            seRegistrationError(res.data.register.messages[0]);
+        else
+            nav('/confirm');
     };
 
     const {
@@ -51,6 +64,9 @@ export default function Register() {
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign up
+                    </Typography>
+                    <Typography style={{ color: "red" }}>
+                        {registrationError}
                     </Typography>
                     <Box component="form" noValidate sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
@@ -139,7 +155,7 @@ export default function Register() {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="/SignIn" variant="body2">
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>

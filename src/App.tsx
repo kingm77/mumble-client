@@ -1,6 +1,7 @@
 import {Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import { history } from './helpers/history';
+import ComfirmEmail from './views/ConfirmEmail';
 import Home from './views/Home';
 import Login from './views/Login'
 import MyTrades from './views/MyTrades';
@@ -17,7 +18,8 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/signIn" element={<Login />} />
-                    <Route path="/signUp" element={<Register />} />
+                <Route path="/signUp" element={<Register />} />
+                <Route path="/confirm" element={<ComfirmEmail />} />
                     <Route
                         path="/pricer"
                         element={
@@ -28,7 +30,7 @@ export default function App() {
                     />
                     <Route path="/myTrades" element={
                         <PrivateRoute>
-                            <Pricer />
+                            <MyTrades />
                         </PrivateRoute>} 
                     />
                 </Routes>

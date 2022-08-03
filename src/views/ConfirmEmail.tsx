@@ -5,10 +5,10 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import NavBar from '../components/Navbar';
 import Copyright from '../components/Copyright';
-import { Button, Stack } from '@mui/material'; 
+import { Button, Stack } from '@mui/material';
 
 
-function HomeContent() {
+function Content() {
     return (
         <React.Fragment>
             <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -25,24 +25,15 @@ function HomeContent() {
                     color="text.primary"
                     gutterBottom
                 >
-                    Mumble Pricer
+                    Comfirm your email
                 </Typography>
+                We emailed a comfirmation link 
+                Check your email for a link to comfirm your email
                 <Typography variant="h5" align="center" color="text.secondary" component="p">
-                   A fast option pricer who implement the Black-Scholes model
                 </Typography>
-
-                <Stack
-                    sx={{ pt: 4 }}
-                    direction="row"
-                    spacing={2}
-                    justifyContent="center"
-                >
-                    <Button href="/pricer" variant="contained">PRICE OPTION</Button>
-                    <Button href="/myTrades"variant="outlined">SHOW OPTION</Button>
-                </Stack>
             </Container>
             {/* End hero unit */}
-            
+
             {/* Footer */}
             <Container
                 maxWidth="md"
@@ -60,6 +51,6 @@ function HomeContent() {
     );
 }
 
-export default function Home() {
-    return <HomeContent />;
+export default function ComfirmEmail() {
+    return <Content />;
 }

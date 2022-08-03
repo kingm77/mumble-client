@@ -1,10 +1,12 @@
-import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Link from '@mui/material/Link';
+import { useCookies } from 'react-cookie';
+import AuthComponent from './AuthComponent';
 
 export default function NavBar() {
+  const [cookies,] = useCookies();
   return (
       <AppBar
           position="static"
@@ -41,12 +43,10 @@ export default function NavBar() {
                       My Trades
                   </Link>
               </nav>
-              <Button href="/signIn" variant="outlined" sx={{ my: 1, mx: 1.5 }}>
-                  Sign in
-              </Button>
-              <Button href="/signUp" variant="outlined" sx={{ my: 1, mx: 1.5 }}>
-                  Sign up
-              </Button>
+              {cookies.pSession ?<Button href="/signUp" variant="outlined" sx={{ my: 1, mx: 1.5 }}>Log out</Button>:
+                 <AuthComponent />
+              }
+             
           </Toolbar>
       </AppBar>
   );

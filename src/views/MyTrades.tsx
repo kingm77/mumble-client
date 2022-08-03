@@ -1,9 +1,11 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import NavBar from '../components/Navbar';
+import { useQuery } from '@apollo/client';
+import { GET_TRADES } from '../backend/apollo/query';
 
 const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Code'},
+    { field: 'id', headerName: 'Code', type: 'number'},
     { field: 'instrument', headerName: 'Instrument'},
     { field: 'price', headerName: 'Price', type: 'number'},
     { field: 'quantity', headerName: 'Quantity', type: 'number'},
@@ -15,32 +17,80 @@ const columns: GridColDef[] = [
     { field: 'interestRate', headerName: 'InterestRate', type: 'number' },
 ];
 
-const rows = [
-    { id: 1, instrument: "AAPL", price: 36.457856448, quantity: 1000, date: "20/06/2022", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 2, instrument: "ATVI", price: 36.457856448, quantity: 1000, date: "20/06/2010", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 3, instrument: "ADBE", price: 36.457856448, quantity: 1000, date: "20/06/2028", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 4, instrument: "CSCO", price: 36.457856448, quantity: 1000, date: "20/06/2005", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 5, instrument: "INTC", price: 36.457856448, quantity: 1000, date: "20/06/2006", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 6, instrument: "PYPL", price: 36.457856448, quantity: 1000, date: "20/06/2021", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 7, instrument: "TSLA", price: 36.457856448, quantity: 1000, date: "20/06/2020", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 8, instrument: "MSFT", price: 36.457856448, quantity: 1000, date: "20/06/2029", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-    { id: 9, instrument: "TSLA", price: 36.457856448, quantity: 1000, date: "20/06/2002", strike: 37.8, maturity: "20/06/2023", spot: 36.8, volatility: 0.21, interestRate: 0.3 },
-];
-
+type row =
+    {
+        id: number,
+        instrument: string
+        price: number,
+        quantity: number,
+        date: string,
+        strike: number,
+        maturity: string,
+        spot: number,
+        volatility: number,
+        interestRate: number
+    }
 export default function DataTable() {
+
+    const [isEvent, setIsEvent] = React.useState(false);
+    const [eventMessage, setEventMessage] = React.useState("");
+    const [rows, setRows] = React.useState<Array<row>>([]);
+    const { loading, error, data } = useQuery(GET_TRADES);
+
+    function ali() {
+        if (error) {
+            setIsEvent(true);
+            setEventMessage("An error occured");
+        }
+        if (loading) {
+            setIsEvent(true);
+            setEventMessage("Loading...");
+        }
+        if (data) {
+            
+            const res = data.me;
+            let r: Array < row > = [];
+            if (rows.length !== res.trades.length) {
+                for (const elm of res.trades) {
+                    console.log(elm);
+                    r = [{
+                        id: Number(elm.id),
+                        instrument: elm.financialDef.instrument.name,
+                        price: Number(elm.price),
+                        quantity: Number(elm.quantity),
+                        date: elm.date,
+                        strike: Number(elm.financialDef.strike),
+                        maturity: elm.financialDef.maturity,
+                        spot: Number(elm.marketData.spot),
+                        volatility: Number(elm.marketData.volatility),
+                        interestRate: Number(elm.marketData.interestRate)
+                    }
+                        , ...r];
+                    console.log(r);
+                }
+                setRows(r);
+            }
+            setIsEvent(false)
+            //console.log(rows);
+        }
+    }
+    useEffect(() => {
+        ali()
+    }, [ali])
+    
     return (
         <div>
             <div style={{ marginBottom: '3rem' }}>
                 <NavBar />
             </div>
             <div style={{ margin: 'auto', height:'50.5rem', width: '66.5rem' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    checkboxSelection
-                />
+                {isEvent ? <h1>{ eventMessage }</h1>:<DataGrid
+                                                            rows={rows}
+                                                            columns={columns}
+                                                            pageSize={15}
+                                                            rowsPerPageOptions={[15]}
+                                                            checkboxSelection
+                                                        />}
             </div>
         </div>
         

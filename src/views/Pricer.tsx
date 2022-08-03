@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -16,7 +16,7 @@ import NavBar from '../components/Navbar';
 import { PricerState } from '../state/GlobalState';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_INSTRUMENT_BY_NAME } from '../backend/apollo/query';
-import { CREATE_FINANCIAL_DEFINITION } from '../backend/apollo/mutation';
+import { BOOK_TRADE } from '../backend/apollo/mutation';
 
 const steps = ['Financial Definition', 'Market Data', 'Pricing Review'];
 
@@ -57,14 +57,58 @@ export default function Pricer() {
     const [mktDataId, setMktDataId] = React.useState(0);
     const [priceValue, setPriceValue] = React.useState(0);
     const [tradeID, setTradeID] = React.useState(0);
+    const [tradeBookingStatus, setTradeBookingStatus] = React.useState({title: "", message: ""});
+    const { data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument } });
+
+    function getInstrumentByName() {
+        if (data) {
+            setInstrumentOwner(data.getInstrumentByName.owner);
+        }
+    }
+
+    useEffect(() => {
+        if (data) {
+            setInstrumentOwner(data.getInstrumentByName.owner);
+        }
+    }, [getInstrumentByName]);
+    
 
     const handleNext = () => {
+        if (activeStep === steps.length - 1) {
+            console.log()
+            bookTradeHandler();
+        }
         setActiveStep(activeStep + 1);
     };
 
     const handleBack = () => {
         setActiveStep(activeStep - 1);
     };
+
+    const [bookTrade] = useMutation(BOOK_TRADE);
+
+    const bookTradeHandler = async () => {
+        console.log(finDefId);
+        console.log(mktDataId);
+        const res = await bookTrade({ variables: { finDefId, marketDataId: mktDataId, price: priceValue, quantity: Number(quantity) } });
+
+        if (res.errors) {
+            setTradeBookingStatus({ title: "Booking error", message: "An error occured in booking" });
+        }
+
+        if (res.data) {
+            if (res.data.bookTrade.success) {
+                setTradeID(res.data.bookTrade.messages[0]);
+                setTradeBookingStatus({
+                    title: "Trade Booked Successfully",
+                    message: `Your trade number is ${res.data.bookTrade.messages[0]}. Next time, You can use this code to recover your trade`
+                });
+            }
+            else {
+                setTradeBookingStatus({ title: "Booking error", message: `on est al${res.data.bookTrade.messages[0]}` });
+            }
+        }
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -85,10 +129,10 @@ export default function Pricer() {
                         {activeStep === steps.length ? (
                             <React.Fragment>
                                 <Typography variant="h5" gutterBottom>
-                                    Trade Booked Successfully
+                                    {tradeBookingStatus.title}
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    Your trade number is #{tradeID}. Next time, You can use this code to recover your trade
+                                    {tradeBookingStatus.message }
                                 </Typography>
                             </React.Fragment>
                         ) : (

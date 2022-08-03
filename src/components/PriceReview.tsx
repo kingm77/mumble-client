@@ -1,12 +1,13 @@
-import React, { useContext, useEffect} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 import { PricerState } from '../state/GlobalState';
 import PriceDataItem from './PriceDataItem';
 import TradeDetail from './TradeDetail';
-import { GET_INSTRUMENT_BY_NAME } from '../backend/apollo/query';
-import { useQuery } from '@apollo/client';
+import {  GET_TRADE_PRICE } from '../backend/apollo/query';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_FINANCIAL_DEFINITION, CREATE_MARKET_DATA } from '../backend/apollo/mutation';
 
 
 
@@ -20,8 +21,15 @@ export default function PriceReview() {
         spot: [spot, ],
         volatility: [volatility, ],
         interestRate: [interestRate,],
-        quantity: [quantity, ],
+        quantity: [quantity,],
+        price: [priceValue, setPriceValue],
+        instrOwner: [instrumentOwner,],
+        financialDefinitionId: [finDefId, setFinDefId],
+        marketDataId: [mktDataId, setMktDataId]
     } = useContext(PricerState);
+
+    const [isEvent, setIsEvent] = useState(false);
+    const [eventMessage, setEventMessage] = useState("");
 
     let strMaturity = "";
     try {
@@ -31,21 +39,62 @@ export default function PriceReview() {
         strMaturity = new Date().toISOString().substring(0, 10);
         setMaturity(new Date());
     }
-    
-    const { loading, error, data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument }});
 
-    if (loading) return <p>Loading...</p>;
-    const res = data.getInstrumentByName;
+    const [createFinancialDefinition] = useMutation(CREATE_FINANCIAL_DEFINITION);
+    const [createMarketData] = useMutation(CREATE_MARKET_DATA);
+     
+    const priceRes = useQuery(GET_TRADE_PRICE, { variables: {finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
 
-    if (res.sucess)
-        return <p>{res.messages[0]}</p>
+    function getPrice() {
+        if (priceRes.error) {
+            setIsEvent(true);
+            setEventMessage("an error occured in pricing");
+        }
+        if (priceRes.data) {
+            if (priceRes.data.getTradePrice.success) {
+                setIsEvent(true);
+                setEventMessage(priceRes.data.getTradePrice.messages[0]);
+            }
+            else {
+                setPriceValue(Number(priceRes.data.getTradePrice.messages[0]))
+            }
+        }
+    }
+    useEffect(() => {
+        const createFinancialDef = async () => {
+            const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
+            if (res.data.createFinancialDefinition.success) {
+                setIsEvent(true);
+                setEventMessage(res.data.createFinancialDefinition.messages[0]);
+            }
+            else {
+                setFinDefId(Number(res.data.createFinancialDefinition.id));
+            }
+        }
 
-    const instrumentObj = res;
-    
-    
+        const createMketData = async () => {
+            const res = await createMarketData({ variables: { volatility: Number(volatility), spot: Number(spot), interestRate: Number(interestRate) } })
+            if (res.data.createMarketData.success) {
+                setIsEvent(true);
+                setEventMessage(res.data.createMarketData.messages[0]);
+            }
+            else {
+                setMktDataId(Number(res.data.createMarketData.id));
+            }
+        }
+        if(finDefId === 0)
+            createFinancialDef();
+        if(mktDataId === 0)
+            createMketData();
+        getPrice();
+    }, [getPrice])
+
+    if (isEvent)
+        return (<p>{eventMessage}</p>)
+
     return (
         <React.Fragment>
-            <Typography variant="h6" gutterBottom>
+            { }<Typography variant="h6" gutterBottom>
                Summary
             </Typography>
 
@@ -62,8 +111,8 @@ export default function PriceReview() {
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Instrument
                     </Typography>
-                    <Typography gutterBottom>{ instrumentObj.name }</Typography>
-                    <Typography gutterBottom>{ instrumentObj.owner }</Typography>
+                    <Typography gutterBottom>{ instrument.toString() }</Typography>
+                    <Typography gutterBottom>{ instrumentOwner.toString() }</Typography>
                 </Grid>
                 <Grid item container direction="column" xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
@@ -73,7 +122,7 @@ export default function PriceReview() {
                         <TradeDetail name="Trade type" value={type.toString()} />
                         <TradeDetail name="Trade quantity" value={quantity.toString()} />
                         <TradeDetail name="Trade date" value={new Date().toISOString().substring(0, 10) } />
-                        <TradeDetail name="Price" value={"78546"} />
+                        <TradeDetail name="Price" value={priceValue} />
                     </Grid>
                 </Grid>
             </Grid>

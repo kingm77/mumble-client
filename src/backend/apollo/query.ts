@@ -19,8 +19,8 @@ export const GET_INSTRUMENT_BY_NAME = gql`
          }`;
 
 export const GET_TRADE_PRICE = gql`
-    query getTradePrice($findDefId : ID!, $marketDataId: ID!, $quantity: Int!) {
-            getTradePrice(finDefId: $findDefId, marketDataId: $marketDataId, quantity: $quantity){
+    query getTradePrice($finDefId : ID!, $marketDataId: ID!, $quantity: Int!) {
+            getTradePrice(finDefId: $finDefId, marketDataId: $marketDataId, quantity: $quantity){
             success messages
         }
     }`; 
@@ -35,7 +35,8 @@ export const GET_TRADES = gql`
             id
             quantity
             price
-            financialDef{strike maturity type}
+            date
+            financialDef{strike maturity type instrument {name}}
             marketData{volatility interestRate spot}
           }
         }
