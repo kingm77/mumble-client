@@ -51,7 +51,8 @@ export default function PriceReview() {
             setEventMessage("an error occured in pricing");
         }
         if (priceRes.data) {
-            if (priceRes.data.getTradePrice.success) {
+            console.log("success ", priceRes.data.getTradePrice.success);
+            if (!priceRes.data.getTradePrice.success) {
                 setIsEvent(true);
                 setEventMessage(priceRes.data.getTradePrice.messages[0]);
             }
@@ -60,6 +61,8 @@ export default function PriceReview() {
             }
         }
     }
+
+
     useEffect(() => {
         const createFinancialDef = async () => {
             const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
@@ -82,12 +85,16 @@ export default function PriceReview() {
                 setMktDataId(Number(res.data.createMarketData.id));
             }
         }
-        if(finDefId === 0)
-            createFinancialDef();
-        if(mktDataId === 0)
-            createMketData();
-        getPrice();
-    }, [getPrice])
+        createFinancialDef();
+        createMketData();
+    }, []);
+
+    useEffect(() => {
+        if(finDefId && mktDataId)
+            getPrice();
+
+        console.log("priceValue ", priceValue)
+    }, [getPrice]);
 
     if (isEvent)
         return (<p>{eventMessage}</p>)
