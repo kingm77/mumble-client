@@ -6,7 +6,7 @@ import { useCookies } from 'react-cookie';
 import AuthComponent from './AuthComponent';
 
 export default function NavBar() {
-  const [cookies,] = useCookies();
+  const [cookies, , removeCookies] = useCookies();
   return (
       <AppBar
           position="static"
@@ -43,7 +43,9 @@ export default function NavBar() {
                       My Trades
                   </Link>
               </nav>
-              {cookies.pSession ?<Button href="/signUp" variant="outlined" sx={{ my: 1, mx: 1.5 }}>Log out</Button>:
+              {cookies.pSession ? <Button href="/"
+                  onClick={() => { removeCookies("pSession", {path: "/"}) }}
+                  variant="outlined" sx={{ my: 1, mx: 1.5 }}>Log out</Button> :
                  <AuthComponent />
               }
              

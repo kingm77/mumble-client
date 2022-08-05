@@ -119,7 +119,6 @@ export default function PriceReview() {
                         Instrument
                     </Typography>
                     <Typography gutterBottom>{ instrument.toString() }</Typography>
-                    <Typography gutterBottom>{ instrumentOwner.toString() }</Typography>
                 </Grid>
                 <Grid item container direction="column" xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

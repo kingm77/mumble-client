@@ -43,7 +43,7 @@ function getStepContent(step: number) {
 const theme = createTheme();
 
 export default function Pricer() {
-    const [instrument, setInstrument] = React.useState("AAPL");
+    const [instrument, setInstrument] = React.useState("ACTIVISION BLIZZARD INC.");
     const [strike, setStrike] = React.useState(1);
     const [tradeType, setTradeType] = React.useState("call");
     const [maturity, setMaturity] = React.useState(new Date());
