@@ -52,30 +52,30 @@ export default function Pricer() {
     const [interestRate, setInterestRate] = React.useState(1);
     const [quantity, setQuantity] = React.useState(1);
     const [activeStep, setActiveStep] = React.useState(0);
-    const [instrumentOwner, setInstrumentOwner] = React.useState("");
+    const [instrumentCurrency, setInstrumentCurrency] = React.useState("");
     const [finDefId, setFinDefId] = React.useState(0);
     const [mktDataId, setMktDataId] = React.useState(0);
     const [priceValue, setPriceValue] = React.useState(0);
     const [tradeID, setTradeID] = React.useState(0);
-    const [tradeBookingStatus, setTradeBookingStatus] = React.useState({title: "", message: ""});
+    const [tradeBookingStatus, setTradeBookingStatus] = React.useState({ title: "", message: "" });
+
     const { data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument } });
 
     function getInstrumentByName() {
         if (data) {
-            setInstrumentOwner(data.getInstrumentByName.owner);
+            setInstrumentCurrency(data.getInstrumentByName.currency);
         }
     }
 
     useEffect(() => {
         if (data) {
-            setInstrumentOwner(data.getInstrumentByName.owner);
+            setInstrumentCurrency(data.getInstrumentByName.currency);
         }
     }, [getInstrumentByName]);
-    
+
 
     const handleNext = () => {
         if (activeStep === steps.length - 1) {
-            console.log()
             bookTradeHandler();
         }
         setActiveStep(activeStep + 1);
@@ -88,8 +88,6 @@ export default function Pricer() {
     const [bookTrade] = useMutation(BOOK_TRADE);
 
     const bookTradeHandler = async () => {
-        console.log(finDefId);
-        console.log(mktDataId);
         const res = await bookTrade({ variables: { finDefId, marketDataId: mktDataId, price: priceValue, quantity: Number(quantity) } });
 
         if (res.errors) {
@@ -132,35 +130,35 @@ export default function Pricer() {
                                     {tradeBookingStatus.title}
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    {tradeBookingStatus.message }
+                                    {tradeBookingStatus.message}
                                 </Typography>
                             </React.Fragment>
                         ) : (
                             <React.Fragment>
-                                    {
-                                        <PricerState.Provider
-                                            value={
-                                                {
-                                                    instr: [instrument, setInstrument],
-                                                    strike: [strike, setStrike],
-                                                    type: [tradeType, setTradeType],
-                                                    maturity: [maturity, setMaturity],
-                                                    volatility: [volatility, setVolatility],
-                                                    spot: [spot, setSpot],
-                                                    interestRate: [interestRate, setInterestRate],
-                                                    quantity: [quantity, setQuantity],
-                                                    instrOwner: [instrumentOwner, setInstrumentOwner],
-                                                    financialDefinitionId: [finDefId, setFinDefId],
-                                                    marketDataId: [mktDataId, setMktDataId],
-                                                    price: [priceValue, setPriceValue],
-                                                    tradeId: [tradeID, setTradeID]
-                                                }
+                                {
+                                    <PricerState.Provider
+                                        value={
+                                            {
+                                                instr: [instrument, setInstrument],
+                                                strike: [strike, setStrike],
+                                                type: [tradeType, setTradeType],
+                                                maturity: [maturity, setMaturity],
+                                                volatility: [volatility, setVolatility],
+                                                spot: [spot, setSpot],
+                                                interestRate: [interestRate, setInterestRate],
+                                                quantity: [quantity, setQuantity],
+                                                instrCurrency: [instrumentCurrency, setInstrumentCurrency],
+                                                financialDefinitionId: [finDefId, setFinDefId],
+                                                marketDataId: [mktDataId, setMktDataId],
+                                                price: [priceValue, setPriceValue],
+                                                tradeId: [tradeID, setTradeID]
                                             }
-                                        >
-                                            {getStepContent(activeStep)}
-                                         </PricerState.Provider>
-                                       
-                                    }
+                                        }
+                                    >
+                                        {getStepContent(activeStep)}
+                                    </PricerState.Provider>
+
+                                }
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -172,7 +170,7 @@ export default function Pricer() {
                                         onClick={handleNext}
                                         sx={{ mt: 3, ml: 1 }}
                                     >
-                                            {activeStep === 0 ? 'next' : activeStep === 1 ? 'show price':'book' }
+                                        {activeStep === 0 ? 'next' : activeStep === 1 ? 'show price' : 'book'}
                                     </Button>
                                 </Box>
                             </React.Fragment>

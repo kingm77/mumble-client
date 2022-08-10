@@ -21,9 +21,9 @@ export default function PriceReview() {
         spot: [spot, ],
         volatility: [volatility, ],
         interestRate: [interestRate,],
+        instrCurrency: [instrumentCurrency, ],
         quantity: [quantity,],
         price: [priceValue, setPriceValue],
-        instrOwner: [instrumentOwner,],
         financialDefinitionId: [finDefId, setFinDefId],
         marketDataId: [mktDataId, setMktDataId]
     } = useContext(PricerState);
@@ -51,7 +51,6 @@ export default function PriceReview() {
             setEventMessage("an error occured in pricing");
         }
         if (priceRes.data) {
-            console.log("success ", priceRes.data.getTradePrice.success);
             if (!priceRes.data.getTradePrice.success) {
                 setIsEvent(true);
                 setEventMessage(priceRes.data.getTradePrice.messages[0]);
@@ -92,8 +91,6 @@ export default function PriceReview() {
     useEffect(() => {
         if(finDefId && mktDataId)
             getPrice();
-
-        console.log("priceValue ", priceValue)
     }, [getPrice]);
 
     if (isEvent)
@@ -101,10 +98,14 @@ export default function PriceReview() {
 
     return (
         <React.Fragment>
-            { }<Typography variant="h6" gutterBottom>
+            <div style={{ textAlign: "center" }}>
+                <Typography  variant="h4" gutterBottom>
+                    Price {priceValue.toString()} {instrumentCurrency.toString() }
+                </Typography>
+            </div>
+            <Typography variant="h6" gutterBottom>
                Summary
             </Typography>
-
             <List disablePadding>
                 <PriceDataItem text="strike" value={strike.toString()} />
                 <PriceDataItem text="spot" value={spot.toString()} />

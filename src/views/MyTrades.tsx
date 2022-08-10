@@ -37,7 +37,7 @@ export default function DataTable() {
     const [rows, setRows] = React.useState<Array<row>>([]);
     const { loading, error, data } = useQuery(GET_TRADES);
 
-    function ali() {
+    function getTrades() {
         if (error) {
             setIsEvent(true);
             setEventMessage("An error occured");
@@ -49,11 +49,10 @@ export default function DataTable() {
         if (data) {
             
             const res = data.me;
-            let r: Array < row > = [];
+            let newRow: Array < row > = [];
             if (rows.length !== res.trades.length) {
                 for (const elm of res.trades) {
-                    console.log(elm);
-                    r = [{
+                    newRow = [{
                         id: Number(elm.id),
                         instrument: elm.financialDef.instrument.name,
                         price: Number(elm.price),
@@ -65,18 +64,16 @@ export default function DataTable() {
                         volatility: Number(elm.marketData.volatility),
                         interestRate: Number(elm.marketData.interestRate)
                     }
-                        , ...r];
-                    console.log(r);
+                        , ...newRow];
                 }
-                setRows(r);
+                setRows(newRow);
             }
             setIsEvent(false)
-            //console.log(rows);
         }
     }
     useEffect(() => {
-        ali()
-    }, [ali])
+        getTrades()
+    }, [getTrades])
     
     return (
         <div>

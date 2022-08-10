@@ -14,7 +14,7 @@ export const GET_INSTRUMENT_BY_NAME = gql`
         query getInstrumentByName($name : String!) {
             getInstrumentByName(name:$name){
                  ... on EntityResult {success messages}
-                 ... on Instrument {id name owner}
+                 ... on Instrument {id name owner currency}
             }
          }`;
 

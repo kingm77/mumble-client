@@ -5,8 +5,10 @@
     "\\src\\backend",
     "\\src\\backend\\apollo",
     "\\src\\components",
-    "\\src\\FormValidation"
+    "\\src\\FormValidation",
+    "\\src\\helpers",
+    "\\src\\state"
   ],
-  "SelectedNode": "\\src\\components\\PriceReview.tsx",
+  "SelectedNode": "\\src\\backend\\apollo\\query.ts",
   "PreviewInSolutionExplorer": false
 }
