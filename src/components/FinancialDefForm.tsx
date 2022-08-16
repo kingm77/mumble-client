@@ -24,7 +24,9 @@ export default function FinancialDefForm() {
         type: [type, setType],
         maturity: [maturity, setMaturity],
         strike: [strike, setStrike],
-        quantity: [quantity, setQuantity]
+        quantity: [quantity, setQuantity],
+        isFinancialDefinitionFormModified: [, setIsFindefFormModified],
+        isPriceCalculated: [, setIsPriceCalculated]
     } = useContext(PricerState);
 
     const { loading, error, data } = useQuery(GET_INSTRUMENTS);
@@ -56,7 +58,11 @@ export default function FinancialDefForm() {
                             label="Instrument"
                             defaultValue=""
                             value={instrument}
-                            onChange={e => {setInstrument(e.target.value.toString())}}
+                            onChange={e => {
+                                setIsFindefFormModified(true);
+                                setIsPriceCalculated(false);
+                                setInstrument(e.target.value.toString())
+                            }}
                         >
                             {instruments.map((instr: any) => (
                                 <MenuItem value={instr.name}>{instr.name}</MenuItem>
@@ -71,7 +77,11 @@ export default function FinancialDefForm() {
                             aria-labelledby="demo-row-radio-buttons-group-label"
                             name="Type"
                             value={type}
-                            onChange={e => {setType(e.target.value.toString())}}
+                            onChange={e => {
+                                setIsFindefFormModified(true);
+                                setIsPriceCalculated(false);
+                                setType(e.target.value.toString())
+                            }}
                         >
                             <FormControlLabel  value="call" control={<Radio />} label="Call" />
                             <FormControlLabel value="put" control={<Radio />} label="Put" />
@@ -88,7 +98,11 @@ export default function FinancialDefForm() {
                         name="strike"
                         label="Strike"
                         value={strike}
-                        onChange={e => { onNumericalDataChange(e.target.value, setStrike) }}
+                        onChange={e => {
+                            setIsFindefFormModified(true);
+                            setIsPriceCalculated(false);
+                            onNumericalDataChange(e.target.value, setStrike)
+                        }}
                         fullWidth
                         autoComplete="Strike*"
                         variant="standard"
@@ -103,7 +117,11 @@ export default function FinancialDefForm() {
                     name="strike"
                     label="Quantity"
                     value={quantity}
-                    onChange={e => {onNumericalDataChange(e.target.value, setQuantity) }}
+                        onChange={e => {
+                            setIsFindefFormModified(true);
+                            setIsPriceCalculated(false);
+                            onNumericalDataChange(e.target.value, setQuantity)
+                        }}
                     fullWidth
                     autoComplete="Quantity*"
                     variant="standard"
@@ -116,6 +134,8 @@ export default function FinancialDefForm() {
                             label="Maturity"
                             value={maturity}
                             onChange={(newValue) => {
+                                setIsFindefFormModified(true);
+                                setIsPriceCalculated(false);
                                 setMaturity(newValue);
                             }}
                             renderInput={(params) => <TextField {...params} />}

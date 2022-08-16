@@ -10,7 +10,9 @@ export default function MarketDataForm() {
     const {
         spot: [spot, setSpot],
         volatility: [volatility, setVolatility],
-        interestRate: [interestRate, setInterestRate]
+        interestRate: [interestRate, setInterestRate],
+        isMarketDataFormModified: [, setIsMktDataModified],
+        isPriceCalculated: [, setIsPriceCalculated]
     } = useContext(PricerState);
 
     return (
@@ -30,7 +32,11 @@ export default function MarketDataForm() {
                         autoComplete="Volatility*"
                         variant="standard"
                         value={volatility}
-                        onChange={e => { onNumericalDataChange(e.target.value, setVolatility) }}
+                        onChange={e => {
+                            onNumericalDataChange(e.target.value, setVolatility);
+                            setIsMktDataModified(true);
+                            setIsPriceCalculated(false);
+                        }}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -44,7 +50,11 @@ export default function MarketDataForm() {
                         autoComplete="Spot*"
                         variant="standard"
                         value={spot}
-                        onChange={e => { onNumericalDataChange(e.target.value, setSpot) }}
+                        onChange={e => {
+                            onNumericalDataChange(e.target.value, setSpot);
+                            setIsMktDataModified(true);
+                            setIsPriceCalculated(false);
+                        }}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -58,7 +68,11 @@ export default function MarketDataForm() {
                         autoComplete="Interest Rate*"
                         variant="standard"
                         value={interestRate}
-                        onChange={e => { onNumericalDataChange(e.target.value, setInterestRate) }}
+                        onChange={e => {
+                            setIsMktDataModified(true);
+                            setIsPriceCalculated(false);
+                            onNumericalDataChange(e.target.value, setInterestRate);
+                        }}
                     />
                 </Grid>
             </Grid>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
@@ -25,7 +25,10 @@ export default function PriceReview() {
         quantity: [quantity,],
         price: [priceValue, setPriceValue],
         financialDefinitionId: [finDefId, setFinDefId],
-        marketDataId: [mktDataId, setMktDataId]
+        marketDataId: [mktDataId, setMktDataId],
+        isMarketDataFormModified: [isMktDataFormModified, setIsMktDataModified],
+        isFinancialDefinitionFormModified: [isFindefFormModified, setIsFindefFormModified],
+        isPriceCalculated: [isPriceCalculated, setIsPriceCalculated]
     } = useContext(PricerState);
 
     const [isEvent, setIsEvent] = useState(false);
@@ -42,25 +45,25 @@ export default function PriceReview() {
 
     const [createFinancialDefinition] = useMutation(CREATE_FINANCIAL_DEFINITION);
     const [createMarketData] = useMutation(CREATE_MARKET_DATA);
-     
-    const priceRes = useQuery(GET_TRADE_PRICE, { variables: {finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
-
-    function getPrice() {
+    const priceRes = useQuery(GET_TRADE_PRICE, { variables: { finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
+    
+    const getPrice = useCallback(() => {
         if (priceRes.error) {
             setIsEvent(true);
             setEventMessage("an error occured in pricing");
         }
-        if (priceRes.data) {
+        if(priceRes.data) {
             if (!priceRes.data.getTradePrice.success) {
                 setIsEvent(true);
                 setEventMessage(priceRes.data.getTradePrice.messages[0]);
             }
             else {
-                setPriceValue(Number(priceRes.data.getTradePrice.messages[0]))
+                setPriceValue(Number(priceRes.data.getTradePrice.messages[0]));
+                setIsPriceCalculated(true);
             }
         }
-    }
 
+    }, [priceRes, setPriceValue, setIsPriceCalculated])
 
     useEffect(() => {
         const createFinancialDef = async () => {
@@ -84,14 +87,27 @@ export default function PriceReview() {
                 setMktDataId(Number(res.data.createMarketData.id));
             }
         }
-        createFinancialDef();
-        createMketData();
-    }, []);
 
-    useEffect(() => {
-        if(finDefId && mktDataId)
+        if (isFindefFormModified) {
+            createFinancialDef();
+            setIsFindefFormModified(false);
+        }
+
+        if (isMktDataFormModified) {
+            createMketData();
+            setIsMktDataModified(false);
+        }
+    },
+        [isFindefFormModified, isMktDataFormModified, instrument, createMarketData,
+         createFinancialDefinition, setIsFindefFormModified, setIsMktDataModified,
+         interestRate, setFinDefId, setMktDataId, spot, strMaturity, strike, type, volatility
+        ]);
+
+    useEffect(() => { 
+        if (finDefId !== 0 && mktDataId !== 0 && !isPriceCalculated) {
             getPrice();
-    }, [getPrice]);
+        }
+    }, [finDefId, mktDataId, isPriceCalculated, getPrice]);
 
     if (isEvent)
         return (<p>{eventMessage}</p>)

@@ -14,6 +14,9 @@ export const PricerState = React.createContext({
     financialDefinitionId:  [{}, (e: any) => { }] as const,
     marketDataId:  [{}, (e: any) => { }] as const,
     price:  [{}, (e: any) => { }] as const,
-    tradeId:  [{}, (e: any) => { }] as const
+    tradeId: [{}, (e: any) => { }] as const,
+    isFinancialDefinitionFormModified: [{}, (e: any) => { }] as const,
+    isMarketDataFormModified: [{}, (e: any) => { }] as const,
+    isPriceCalculated: [{}, (e: any) => { }] as const
 });
 

@@ -21,10 +21,11 @@ import { BOOK_TRADE } from '../backend/apollo/mutation';
 const steps = ['Financial Definition', 'Market Data', 'Pricing Review'];
 
 export const onNumericalDataChange = (val: any, handle: (value: any) => void) => {
+   /* console.log(Number(val));
     if (val <= 0)
         handle(1);
-    else
-        handle(val);
+    else*/
+    handle(val);
 }
 
 function getStepContent(step: number) {
@@ -57,7 +58,9 @@ export default function Pricer() {
     const [priceValue, setPriceValue] = React.useState(0);
     const [tradeID, setTradeID] = React.useState(0);
     const [tradeBookingStatus, setTradeBookingStatus] = React.useState({ title: "", message: "" });
-
+    const [isFindefFormModified, setIsFindefFormModified] = React.useState(true);
+    const [isMktDataFormModified, setIsMktDataModified] = React.useState(true);
+    const [isPriceCalculated, setIsPriceCalculated] = React.useState(false);
     const [activeStep, setActiveStep] = React.useState(0);
 
     const { data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument } });
@@ -152,7 +155,10 @@ export default function Pricer() {
                                                 financialDefinitionId: [finDefId, setFinDefId],
                                                 marketDataId: [mktDataId, setMktDataId],
                                                 price: [priceValue, setPriceValue],
-                                                tradeId: [tradeID, setTradeID]
+                                                tradeId: [tradeID, setTradeID],
+                                                isFinancialDefinitionFormModified: [isFindefFormModified, setIsFindefFormModified],
+                                                isMarketDataFormModified: [isMktDataFormModified, setIsMktDataModified],
+                                                isPriceCalculated: [isPriceCalculated, setIsPriceCalculated]
                                             }
                                         }
                                     >
