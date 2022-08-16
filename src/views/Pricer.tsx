@@ -51,13 +51,14 @@ export default function Pricer() {
     const [spot, setSpot] = React.useState(1);
     const [interestRate, setInterestRate] = React.useState(1);
     const [quantity, setQuantity] = React.useState(1);
-    const [activeStep, setActiveStep] = React.useState(0);
     const [instrumentCurrency, setInstrumentCurrency] = React.useState("");
     const [finDefId, setFinDefId] = React.useState(0);
     const [mktDataId, setMktDataId] = React.useState(0);
     const [priceValue, setPriceValue] = React.useState(0);
     const [tradeID, setTradeID] = React.useState(0);
     const [tradeBookingStatus, setTradeBookingStatus] = React.useState({ title: "", message: "" });
+
+    const [activeStep, setActiveStep] = React.useState(0);
 
     const { data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument } });
 
