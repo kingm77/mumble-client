@@ -65,17 +65,11 @@ export default function Pricer() {
 
     const { data } = useQuery(GET_INSTRUMENT_BY_NAME, { variables: { name: instrument } });
 
-    function getInstrumentByName() {
-        if (data) {
-            setInstrumentCurrency(data.getInstrumentByName.currency);
-        }
-    }
-
     useEffect(() => {
         if (data) {
             setInstrumentCurrency(data.getInstrumentByName.currency);
         }
-    }, [getInstrumentByName]);
+    }, [data]);
 
 
     const handleNext = () => {

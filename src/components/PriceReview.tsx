@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
@@ -6,7 +6,7 @@ import { PricerState } from '../state/GlobalState';
 import PriceDataItem from './PriceDataItem';
 import TradeDetail from './TradeDetail';
 import {  GET_TRADE_PRICE } from '../backend/apollo/query';
-import { useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { CREATE_FINANCIAL_DEFINITION, CREATE_MARKET_DATA } from '../backend/apollo/mutation';
 
 
@@ -43,29 +43,31 @@ export default function PriceReview() {
         setMaturity(new Date());
     }
 
+    
     const [createFinancialDefinition] = useMutation(CREATE_FINANCIAL_DEFINITION);
     const [createMarketData] = useMutation(CREATE_MARKET_DATA);
-    const priceRes = useQuery(GET_TRADE_PRICE, { variables: { finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
-    
-    const getPrice = useCallback(() => {
-        if (priceRes.error) {
-            setIsEvent(true);
-            setEventMessage("an error occured in pricing");
+    const [getTradePrice, { loading, data }] = useLazyQuery(GET_TRADE_PRICE, { variables: { finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
+
+    useEffect(() => {
+        if (loading) {
+            setPriceValue("loading...");
         }
-        if(priceRes.data) {
-            if (!priceRes.data.getTradePrice.success) {
+
+        if (data) {
+            if (!data.getTradePrice.success) {
                 setIsEvent(true);
-                setEventMessage(priceRes.data.getTradePrice.messages[0]);
+                setEventMessage(data.getTradePrice.messages[0]);
             }
             else {
-                setPriceValue(Number(priceRes.data.getTradePrice.messages[0]));
+                console.log("price is ok", data);
+                setPriceValue(Number(data.getTradePrice.messages[0]));
                 setIsPriceCalculated(true);
             }
         }
-
-    }, [priceRes, setPriceValue, setIsPriceCalculated])
-
+    }, [loading, data, setIsPriceCalculated, setPriceValue, priceValue])
+   
     useEffect(() => {
+        console.log("what the fuck")
         const createFinancialDef = async () => {
             const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
             if (res.data.createFinancialDefinition.success) {
@@ -74,6 +76,7 @@ export default function PriceReview() {
             }
             else {
                 setFinDefId(Number(res.data.createFinancialDefinition.id));
+                setIsFindefFormModified(false);
             }
         }
 
@@ -85,29 +88,26 @@ export default function PriceReview() {
             }
             else {
                 setMktDataId(Number(res.data.createMarketData.id));
+                setIsMktDataModified(false);
             }
         }
 
-        if (isFindefFormModified) {
+        if (isFindefFormModified) 
             createFinancialDef();
-            setIsFindefFormModified(false);
-        }
 
-        if (isMktDataFormModified) {
+        if (isMktDataFormModified)
             createMketData();
-            setIsMktDataModified(false);
-        }
+
+        if (!isMktDataFormModified && !isFindefFormModified) {
+            console.log("let's see");
+            getTradePrice();
+        }        
     },
         [isFindefFormModified, isMktDataFormModified, instrument, createMarketData,
          createFinancialDefinition, setIsFindefFormModified, setIsMktDataModified,
-         interestRate, setFinDefId, setMktDataId, spot, strMaturity, strike, type, volatility
+         interestRate, setFinDefId, setMktDataId, spot, strMaturity, strike, type, volatility,
+         getTradePrice
         ]);
-
-    useEffect(() => { 
-        if (finDefId !== 0 && mktDataId !== 0 && !isPriceCalculated) {
-            getPrice();
-        }
-    }, [finDefId, mktDataId, isPriceCalculated, getPrice]);
 
     if (isEvent)
         return (<p>{eventMessage}</p>)

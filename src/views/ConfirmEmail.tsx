@@ -5,7 +5,6 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import NavBar from '../components/Navbar';
 import Copyright from '../components/Copyright';
-import { Button, Stack } from '@mui/material';
 
 
 function Content() {
