@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
@@ -44,11 +44,38 @@ export default function PriceReview() {
     }
 
     
+    
     const [createFinancialDefinition] = useMutation(CREATE_FINANCIAL_DEFINITION);
     const [createMarketData] = useMutation(CREATE_MARKET_DATA);
     const [getTradePrice, { loading, data }] = useLazyQuery(GET_TRADE_PRICE, { variables: { finDefId, marketDataId: mktDataId, quantity: Number(quantity) } });
 
-    useEffect(() => {
+    const createFinancialDef = useCallback(async () => {
+        const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
+        if (res.data.createFinancialDefinition.success) {
+            setIsEvent(true);
+            setEventMessage(res.data.createFinancialDefinition.messages[0]);
+        }
+        else {
+            setIsFindefFormModified(false)
+            console.log("findef data created")
+            setFinDefId(Number(res.data.createFinancialDefinition.id));
+        }
+    }, []);
+
+    const createMketData = useCallback(async () => {
+        const res = await createMarketData({ variables: { volatility: Number(volatility), spot: Number(spot), interestRate: Number(interestRate) } })
+        if (res.data.createMarketData.success) {
+            setIsEvent(true);
+            setEventMessage(res.data.createMarketData.messages[0]);
+        }
+        else {
+            setIsMktDataModified(false);
+            console.log("mkt data created")
+            setMktDataId(Number(res.data.createMarketData.id));
+        }
+    }, []);
+
+    const getPrice = () => {
         if (loading) {
             setPriceValue("loading...");
         }
@@ -64,50 +91,32 @@ export default function PriceReview() {
                 setIsPriceCalculated(true);
             }
         }
-    }, [loading, data, setIsPriceCalculated, setPriceValue, priceValue])
+    }
+
+    useEffect(() => {
+        getPrice()
+    }, [getPrice])
+
+    useEffect(() => {
+        if (isFindefFormModified) {
+            createFinancialDef();
+        }     
+    }, [])
+
+    useEffect(() => {
+        if (isMktDataFormModified) {
+            createMketData();
+        }
+            
+    }, [])
    
     useEffect(() => {
-        console.log("what the fuck")
-        const createFinancialDef = async () => {
-            const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
-            if (res.data.createFinancialDefinition.success) {
-                setIsEvent(true);
-                setEventMessage(res.data.createFinancialDefinition.messages[0]);
-            }
-            else {
-                setFinDefId(Number(res.data.createFinancialDefinition.id));
-                setIsFindefFormModified(false);
-            }
+            if (!isPriceCalculated && !isFindefFormModified && !isMktDataFormModified) {
+                console.log("create with", mktDataId, finDefId);
+                getTradePrice();
         }
+    }, [isPriceCalculated, isFindefFormModified, isMktDataFormModified]);
 
-        const createMketData = async () => {
-            const res = await createMarketData({ variables: { volatility: Number(volatility), spot: Number(spot), interestRate: Number(interestRate) } })
-            if (res.data.createMarketData.success) {
-                setIsEvent(true);
-                setEventMessage(res.data.createMarketData.messages[0]);
-            }
-            else {
-                setMktDataId(Number(res.data.createMarketData.id));
-                setIsMktDataModified(false);
-            }
-        }
-
-        if (isFindefFormModified) 
-            createFinancialDef();
-
-        if (isMktDataFormModified)
-            createMketData();
-
-        if (!isMktDataFormModified && !isFindefFormModified) {
-            console.log("let's see");
-            getTradePrice();
-        }        
-    },
-        [isFindefFormModified, isMktDataFormModified, instrument, createMarketData,
-         createFinancialDefinition, setIsFindefFormModified, setIsMktDataModified,
-         interestRate, setFinDefId, setMktDataId, spot, strMaturity, strike, type, volatility,
-         getTradePrice
-        ]);
 
     if (isEvent)
         return (<p>{eventMessage}</p>)
