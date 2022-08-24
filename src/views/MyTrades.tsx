@@ -50,7 +50,7 @@ export default function DataTable() {
             
             const res = data.me;
             let newRow: Array < row > = [];
-            if (rows.length !== res.trades.length) {
+            if (res.trades.length && rows.length !== res.trades.length) {
                 for (const elm of res.trades) {
                     newRow = [{
                         id: Number(elm.id),
