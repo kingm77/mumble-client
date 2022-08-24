@@ -57,7 +57,6 @@ export default function PriceReview() {
         }
         else {
             setIsFindefFormModified(false)
-            console.log("findef data created")
             setFinDefId(Number(res.data.createFinancialDefinition.id));
         }
     }, []);
@@ -70,7 +69,6 @@ export default function PriceReview() {
         }
         else {
             setIsMktDataModified(false);
-            console.log("mkt data created")
             setMktDataId(Number(res.data.createMarketData.id));
         }
     }, []);
@@ -86,7 +84,6 @@ export default function PriceReview() {
                 setEventMessage(data.getTradePrice.messages[0]);
             }
             else {
-                console.log("price is ok", data);
                 setPriceValue(Number(data.getTradePrice.messages[0]));
                 setIsPriceCalculated(true);
             }
@@ -112,7 +109,6 @@ export default function PriceReview() {
    
     useEffect(() => {
             if (!isPriceCalculated && !isFindefFormModified && !isMktDataFormModified) {
-                console.log("create with", mktDataId, finDefId);
                 getTradePrice();
         }
     }, [isPriceCalculated, isFindefFormModified, isMktDataFormModified]);

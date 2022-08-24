@@ -21,11 +21,10 @@ import { BOOK_TRADE } from '../backend/apollo/mutation';
 const steps = ['Financial Definition', 'Market Data', 'Pricing Review'];
 
 export const onNumericalDataChange = (val: any, handle: (value: any) => void) => {
-   /* console.log(Number(val));
-    if (val <= 0)
+    if (val !== "" && val <= 0)
         handle(1);
-    else*/
-    handle(val);
+    else
+        handle(val);
 }
 
 function getStepContent(step: number) {
@@ -44,7 +43,7 @@ function getStepContent(step: number) {
 const theme = createTheme();
 
 export default function Pricer() {
-    const [instrument, setInstrument] = React.useState("ACTIVISION BLIZZARD INC.");
+    const [instrument, setInstrument] = React.useState("AIR LIQUIDE S.A.");
     const [strike, setStrike] = React.useState(1);
     const [tradeType, setTradeType] = React.useState("call");
     const [maturity, setMaturity] = React.useState(new Date());
