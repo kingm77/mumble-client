@@ -1,9 +1,11 @@
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
-import Link from '@mui/material/Link';
+import Link from '@mui/material/Link' ;
 import { useCookies } from 'react-cookie';
 import AuthComponent from './AuthComponent';
+import RouteLink from './RouteLink';
+
 
 export default function NavBar() {
   const [cookies, , removeCookies] = useCookies();
@@ -15,32 +17,32 @@ export default function NavBar() {
           sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
       >
           <Toolbar sx={{ flexWrap: 'wrap' }}>
+    
               <Link
                   variant="h6"
                   color="inherit"
-                  href="/"
                   noWrap
                   style={{ textDecoration: "none" }}
                   sx={{ flexGrow: 1 }}
               >
-                  Mumble
+                  <RouteLink path="/" name="Mumble" />
               </Link>
               <nav>
                   <Link
                       variant="button"
                       color="text.primary"
-                      href="/pricer"
+                      style={{ textDecoration: "none" }}
                       sx={{ my: 1, mx: 1.5 }}
                   >
-                      Pricer
+                      <RouteLink path="/pricer" name="PRICER" />
                   </Link>
                   <Link
                       variant="button"
                       color="text.primary"
-                      href="/myTrades"
+                      style={{ textDecoration: "none" }}
                       sx={{ my: 1, mx: 1.5 }}
                   >
-                      My Trades
+                      <RouteLink path="/myTrades" name="my trades" />
                   </Link>
               </nav>
               {cookies.pSession ? <Button href="/"

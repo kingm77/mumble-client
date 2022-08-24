@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import NavBar from '../components/Navbar';
 import Copyright from '../components/Copyright';
 import { Button, Stack } from '@mui/material'; 
+import RouteLink from '../components/RouteLink';
 
 
 function HomeContent() {
@@ -37,8 +38,12 @@ function HomeContent() {
                     spacing={2}
                     justifyContent="center"
                 >
-                    <Button href="/pricer" variant="contained">PRICE OPTION</Button>
-                    <Button href="/myTrades"variant="outlined">SHOW OPTION</Button>
+                    <Button href="/pricer" variant="contained">
+                        <RouteLink path="/pricer" name="PRICE OPTION" />
+                    </Button>
+                    <Button href="/myTrades" variant="outlined">
+                        <RouteLink path="/myTrades" name="SHOW OPTION" />
+                    </Button>
                 </Stack>
             </Container>
             {/* End hero unit */}

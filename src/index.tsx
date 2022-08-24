@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from "react-router-dom";
 import App from './App';
 import backendClient from './backend/apollo';
 
@@ -13,11 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
         <CookiesProvider>
-            <BrowserRouter>
+            <HashRouter>
                 <ApolloProvider client={backendClient} >
                     <App />
                 </ApolloProvider>
-            </BrowserRouter>
+            </HashRouter>
         </CookiesProvider>
   </React.StrictMode>
 );

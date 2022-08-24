@@ -16,7 +16,7 @@ export default function App() {
     return (
         <div className="App">
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route  path="/" element={<Home />} />
                     <Route path="/signIn" element={<Login />} />
                 <Route path="/signUp" element={<Register />} />
                 <Route path="/confirm" element={<ComfirmEmail />} />
