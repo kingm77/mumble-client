@@ -42,7 +42,7 @@ export default function NavBar() {
                       style={{ textDecoration: "none" }}
                       sx={{ my: 1, mx: 1.5 }}
                   >
-                      <RouteLink path="/myTrades" name="my trades" />
+                      <RouteLink path="/myTrades" name="MY OPTIONS" />
                   </Link>
               </nav>
               {cookies.pSession ? <Button href="/"
