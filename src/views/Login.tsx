@@ -29,6 +29,8 @@ export default function Login() {
     const [loginFct] = useMutation(LOGIN);
 
     const nav = useNavigate();
+    
+    console.log(window.location.hostname);
 
     const onSubmit = async (data: any) => {
         const res = await loginFct({ variables: { email: data.email, password: data.password } });
