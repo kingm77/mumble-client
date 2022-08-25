@@ -5,7 +5,7 @@ import { history } from '../helpers/history';
 function PrivateRoute({ children }: any) {
     const [cookies,] = useCookies();
     console.log(cookies);
-    if (!cookies.pSession) {
+    if (cookies.pSession) {
         // not logged in so redirect to login page with the return url
         return <Navigate to="/signIn" state={{ from: history.location }} /> 
     }
