@@ -20,3 +20,4 @@ export const PricerState = React.createContext({
     isPriceCalculated: [{}, (e: any) => { }] as const
 });
 
+export const AuthState = React.createContext([{}, (e: boolean) => { }] as const);

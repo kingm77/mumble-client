@@ -2,13 +2,14 @@ import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Link from '@mui/material/Link' ;
-import { useCookies } from 'react-cookie';
 import AuthComponent from './AuthComponent';
 import RouteLink from './RouteLink';
+import { useContext } from 'react';
+import { AuthState } from '../state/GlobalState';
 
 
 export default function NavBar() {
-  const [cookies, , removeCookies] = useCookies();
+    const [isAuthenticated, setIsAuthenticated] = useContext(AuthState);
   return (
       <AppBar
           position="static"
@@ -45,8 +46,8 @@ export default function NavBar() {
                       <RouteLink path="/myTrades" name="MY OPTIONS" />
                   </Link>
               </nav>
-              {cookies.pSession ? <Button href="/"
-                  onClick={() => { removeCookies("pSession", {path: "/"}) }}
+              {isAuthenticated ? <Button href="/"
+                  onClick={() => { setIsAuthenticated(false) }}
                   variant="outlined" sx={{ my: 1, mx: 1.5 }}>Log out</Button> :
                  <AuthComponent />
               }

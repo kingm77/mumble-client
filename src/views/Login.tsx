@@ -14,10 +14,11 @@ import Copyright from '../components/Copyright';
 import NavBar from '../components/Navbar';
 import { LoginValidationSchema } from '../FormValidation/LoginValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '../backend/apollo/mutation';
 import {useNavigate } from 'react-router-dom';
+import { AuthState } from '../state/GlobalState';
 
 
 const theme = createTheme();
@@ -26,19 +27,22 @@ export default function Login() {
 
     const [loginError, setLoginError] = useState("");
 
+    const [, setIsAuthenticated] = useContext(AuthState);
+
     const [loginFct] = useMutation(LOGIN);
 
     const nav = useNavigate();
-    
-    console.log(window.location.hostname);
 
     const onSubmit = async (data: any) => {
         const res = await loginFct({ variables: { email: data.email, password: data.password } });
 
         if (!res.data.login.success)
             setLoginError(res.data.login.messages[0]);
-        else
+        else {
+            setIsAuthenticated(true);
             nav('/');
+        }
+            
     };
 
     const {
