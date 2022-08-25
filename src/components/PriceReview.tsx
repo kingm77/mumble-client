@@ -108,8 +108,9 @@ export default function PriceReview() {
     }, [])
    
     useEffect(() => {
-            if (!isPriceCalculated && !isFindefFormModified && !isMktDataFormModified) {
-                getTradePrice();
+        if (!isPriceCalculated && !isFindefFormModified && !isMktDataFormModified && finDefId && mktDataId && finDefId !== 0 && mktDataId !== 0) {
+            console.log(finDefId, mktDataId);
+            getTradePrice();
         }
     }, [isPriceCalculated, isFindefFormModified, isMktDataFormModified]);
 
