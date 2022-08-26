@@ -37,6 +37,7 @@ export default function PriceReview() {
     let strMaturity = "";
     try {
         strMaturity = new Date(maturity.toString()).toISOString().substring(0, 10);
+        console.log(strMaturity);
     }
     catch (ex: any) {
         strMaturity = new Date().toISOString().substring(0, 10);
@@ -51,7 +52,7 @@ export default function PriceReview() {
 
     const createFinancialDef = useCallback(async () => {
         const res = await createFinancialDefinition({ variables: { strike: Number(strike), maturity: strMaturity, type, instrumentName: instrument } })
-        if (res.data.createFinancialDefinition.success) {
+        if (res.data.createFinancialDefinition.success === false) {
             setIsEvent(true);
             setEventMessage(res.data.createFinancialDefinition.messages[0]);
         }
@@ -63,9 +64,9 @@ export default function PriceReview() {
 
     const createMketData = useCallback(async () => {
         const res = await createMarketData({ variables: { volatility: Number(volatility), spot: Number(spot), interestRate: Number(interestRate) } })
-        if (res.data.createMarketData.success) {
-            setIsEvent(true);
+        if (res.data.createMarketData.success === false) {
             setEventMessage(res.data.createMarketData.messages[0]);
+            setIsEvent(true);
         }
         else {
             setIsMktDataModified(false);
@@ -80,8 +81,8 @@ export default function PriceReview() {
 
         if (data) {
             if (!data.getTradePrice.success) {
-                setIsEvent(true);
                 setEventMessage(data.getTradePrice.messages[0]);
+                setIsEvent(true);
             }
             else {
                 setPriceValue(Number(data.getTradePrice.messages[0]));
