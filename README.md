@@ -1,6 +1,7 @@
 # Mumble Pricer Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Client for a pricer who implement the Black-Scholes Model.
+You can find the api with which it is connected in the following repository https://github.com/kingm77/mumble-api
 
 ## Available Scripts
 
